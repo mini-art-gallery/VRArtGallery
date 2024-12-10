@@ -40,7 +40,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* MeshComponent;
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

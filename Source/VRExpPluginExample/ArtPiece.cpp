@@ -13,7 +13,9 @@ AArtPiece::AArtPiece()
     MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
     MeshComponent->SetupAttachment(RootComponent);
     MeshComponent->SetSimulatePhysics(true);
-    RootComponent = MeshComponent;
+    //MeshComponent->RegisterComponent();
+    MeshComponent->SetIsReplicated(true);
+    //RootComponent = MeshComponent;
 
     // Set a default mesh (like a frame or wall)
     static ConstructorHelpers::FObjectFinder<UStaticMesh> CanvasMesh(TEXT("/Script/Engine.StaticMesh'/Game/VRArtGallery/canvasModel.canvasModel'"));
@@ -22,13 +24,13 @@ AArtPiece::AArtPiece()
         MeshComponent->SetStaticMesh(CanvasMesh.Object);
     }
 
+
 }
 
 // Called when the game starts or when spawned
 void AArtPiece::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

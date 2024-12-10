@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UArtworkLoader.h"
+#include "ArtworkLoader.h"
 
-void UArtworkLoader::LoadArtwork() {
+void AArtworkLoader::LoadArtwork() {
     FString test = OpenFileDialog();
     UTexture2D* tex = LoadTextureFromFile(test);
     CreateArtPiece(tex);
 }
 
-FString UArtworkLoader::OpenFileDialog()
+FString AArtworkLoader::OpenFileDialog()
 {
     // Ensure the platform module is available
     IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
@@ -42,7 +42,7 @@ FString UArtworkLoader::OpenFileDialog()
     return FString(); // Return an empty string if no file was selected
 }
 
-UTexture2D* UArtworkLoader::LoadTextureFromFile(const FString& FilePath)
+UTexture2D* AArtworkLoader::LoadTextureFromFile(const FString& FilePath)
 {
     // Try to load the texture using the ImageUtils helper function
     UTexture2D* Texture = FImageUtils::ImportFileAsTexture2D(FilePath);
@@ -50,10 +50,10 @@ UTexture2D* UArtworkLoader::LoadTextureFromFile(const FString& FilePath)
 }
 
 
-void UArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
+void AArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
     if (ArtTexture)
     {
-        UWorld* World = GEngine->GetWorldContexts()[0].World();
+        UWorld* World = GetWorld();
         /*auto* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(World, 0);
         FVector PlayerLocation = PlayerCharacter->GetActorLocation();
         FVector PlayerForward = PlayerCharacter->GetActorForwardVector();*/
@@ -65,8 +65,11 @@ void UArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
             FActorSpawnParameters SpawnParams;
             SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
+            FTransform tr = FTransform(FRotator::ZeroRotator, SpawnLocation, FVector(1,1,1));
             // Spawn the ArtPieceActor at the specified location
-            AArtPiece* NewArtPiece = World->SpawnActor<AArtPiece>(AArtPiece::StaticClass(), SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+            //AArtPiece* NewArtPiece = World->SpawnActorDeferred<AArtPiece>(AArtPiece::StaticClass(), tr);
+            AArtPiece* NewArtPiece = World->SpawnActor<AArtPiece>(AArtPiece::StaticClass(), tr, SpawnParams);
+
 
             if (NewArtPiece)
             {
