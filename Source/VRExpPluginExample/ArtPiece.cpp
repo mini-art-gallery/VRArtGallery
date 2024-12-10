@@ -6,14 +6,14 @@
 // Sets default values
 AArtPiece::AArtPiece()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
     // Create the Static Mesh Component (the frame or surface)
     MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
     MeshComponent->SetupAttachment(RootComponent);
     MeshComponent->SetSimulatePhysics(true);
-    RootComponent = MeshComponent;
+    MeshComponent->SetIsReplicated(true);
 
     // Set a default mesh (like a frame or wall)
     static ConstructorHelpers::FObjectFinder<UStaticMesh> CanvasMesh(TEXT("/Script/Engine.StaticMesh'/Game/VRArtGallery/canvasModel.canvasModel'"));
@@ -21,7 +21,6 @@ AArtPiece::AArtPiece()
     {
         MeshComponent->SetStaticMesh(CanvasMesh.Object);
     }
-
 }
 
 // Called when the game starts or when spawned
@@ -41,7 +40,6 @@ void AArtPiece::Tick(float DeltaTime)
 void AArtPiece::SetArtTexture(UTexture2D* ArtTexture) {
     if (MeshComponent && ArtTexture)
     {
-
         // Create a dynamic material instance from the current material
         UMaterial* BaseMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Script/Engine.Material'/Game/VRArtGallery/ArtPieceMaterial.ArtPieceMaterial'"));
         UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(BaseMaterial, this);
@@ -55,28 +53,6 @@ void AArtPiece::SetArtTexture(UTexture2D* ArtTexture) {
         int32 Width = ArtTexture->GetSizeX();
         int32 Height = ArtTexture->GetSizeY();
         ResizeToTexture(Width, Height);
-
-        //TArray<AActor*> FoundActors;
-        //TArray<AActor*> ExactClimbWallActors;
-        //UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
-
-        //DynamicMaterial->SetTextureParameterValue(FName("ArtTexture"), ArtTexture);
-        //// Apply the material to the mesh component
-
-        //for (AActor* Actor : FoundActors)
-        //{
-        //    TArray<UActorComponent> Components;
-        //    Actor->GetComponents(Components);
-        //    for (UActorComponent Component : Components)
-        //    {
-        //        UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component);
-        //        if (Mesh && Mesh->GetName() == "StaticMeshComponent0")
-        //        {
-        //            Mesh->SetMaterial(0, DynamicMaterial);
-        //        }
-        //    }
-        //}
-
     }
 }
 
