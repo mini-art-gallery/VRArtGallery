@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UArtworkLoader.h"
+#include "ArtworkLoader.h"
 
-void UArtworkLoader::LoadArtwork() {
+void AArtworkLoader::LoadArtwork() {
     FString test = OpenFileDialog();
     UTexture2D* tex = LoadTextureFromFile(test);
     CreateArtPiece(tex);
 }
 
-FString UArtworkLoader::OpenFileDialog()
+FString AArtworkLoader::OpenFileDialog()
 {
     // Ensure the platform module is available
     IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
@@ -42,7 +42,7 @@ FString UArtworkLoader::OpenFileDialog()
     return FString(); // Return an empty string if no file was selected
 }
 
-UTexture2D* UArtworkLoader::LoadTextureFromFile(const FString& FilePath)
+UTexture2D* AArtworkLoader::LoadTextureFromFile(const FString& FilePath)
 {
     // Try to load the texture using the ImageUtils helper function
     UTexture2D* Texture = FImageUtils::ImportFileAsTexture2D(FilePath);
@@ -50,14 +50,12 @@ UTexture2D* UArtworkLoader::LoadTextureFromFile(const FString& FilePath)
 }
 
 
-void UArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
+void AArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
     if (ArtTexture)
-    {
-        UWorld* World = GEngine->GetWorldContexts()[0].World();
-        /*auto* PlayerCharacter = UGameplayStatics::GetPlayerCharacter(World, 0);
-        FVector PlayerLocation = PlayerCharacter->GetActorLocation();
-        FVector PlayerForward = PlayerCharacter->GetActorForwardVector();*/
-        FVector SpawnLocation = FVector(0, 0, 400);//PlayerLocation + PlayerForward * 200.0f;
+    {       
+        UWorld* World = GetWorld();
+        FVector SpawnLocation = FVector(0, 0, 400);
+
         // Get the current world
         if (World)
         {
@@ -76,44 +74,3 @@ void UArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
         }
     }
 }
-
-// Create a material instance and set the texture parameter
-//UMaterialInstanceDynamic* UArtworkLoader::CreateMaterialWithTexture(UTexture2D* Texture)
-//{
-    ////if (!Texture) return nullptr;
-
-    ////// Find the base material in the content folder
-    ////UMaterial* BaseMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Script/Engine.Material'/Game/VRE/Misc/Meshes/CubeMaterial.CubeMaterial'"));
-
-    ////if (!BaseMaterial) return nullptr;
-
-    ////// Create a dynamic material instance
-    ////UMaterialInstanceDynamic* MaterialInstance = UMaterialInstanceDynamic::Create(BaseMaterial);
-
-    ////// Set the texture parameter
-    ////if (MaterialInstance)
-    ////{
-
-    ////    TArray<AActor> FoundActors;
-    ////    TArray<AActor> ExactClimbWallActors;
-    ////    UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), FoundActors);
-
-    ////    MaterialInstance->SetTextureParameterValue(FName("Param"), Texture);
-    ////    // Apply the material to the mesh component
-
-    ////    for (AActor* Actor : FoundActors)
-    ////    {
-    ////        TArray<UActorComponent> Components;
-    ////        Actor->GetComponents(Components);
-    ////        for (UActorComponent Component : Components)
-    ////        {
-    ////            UStaticMeshComponent* MeshComponent = Cast<UStaticMeshComponent>(Component);
-    ////            if (MeshComponent && MeshComponent->GetName() == "StaticMeshComponent0")
-    ////            {
-    ////                MeshComponent->SetMaterial(0, MaterialInstance);
-    ////            }
-    ////        }
-    ////    }
-    ////}
-    /*return nullptr;
-}*/

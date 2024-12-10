@@ -26,20 +26,20 @@
 #include "ArtPiece.h"
 
 
-#include "UArtworkLoader.generated.h"
+#include "ArtworkLoader.generated.h"
 
 UCLASS()
-class VREXPPLUGINEXAMPLE_API UArtworkLoader : public UObject
+class VREXPPLUGINEXAMPLE_API AArtworkLoader : public AActor
 {
 	GENERATED_BODY()
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "ArtworkLoader|StaticMethods")
-	static void LoadArtwork();
+	UFUNCTION(BlueprintCallable, Category = "ArtworkLoader")
+	void LoadArtwork();
 
 private:
-	static FString OpenFileDialog();
-	static UTexture2D* LoadTextureFromFile(const FString& FilePath);
-	static void CreateArtPiece(UTexture2D* ArtTexture);
+	FString OpenFileDialog();
+	UTexture2D* LoadTextureFromFile(const FString& FilePath);
+	void CreateArtPiece(UTexture2D* ArtTexture);
 };
