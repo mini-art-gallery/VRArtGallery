@@ -12,7 +12,6 @@ AArtPiece::AArtPiece()
     // Create the Static Mesh Component (the frame or surface)
     MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
     MeshComponent->SetupAttachment(RootComponent);
-    MeshComponent->SetSimulatePhysics(true);
     MeshComponent->SetIsReplicated(true);
 
     // Set a default mesh (like a frame or wall)
@@ -66,7 +65,7 @@ void AArtPiece::ResizeToTexture(int32 Width, int32 Height) {
         if (ratio > 1)
             NewScale.Z *= 1 / ratio;
         else
-            NewScale.X *= ratio;
+            NewScale.Y *= ratio;
 
         MeshComponent->GetOwner()->SetActorScale3D(NewScale);
     }
