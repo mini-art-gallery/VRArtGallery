@@ -2,22 +2,11 @@
 
 
 #include "ArtworkLoader.h"
-#include "GalleryPlayerState.h"
-#include "GameFramework/PlayerController.h"
 
 void AArtworkLoader::LoadArtwork() {
     FString test = OpenFileDialog();
     UTexture2D* tex = LoadTextureFromFile(test);
-
-    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController)
-    {
-        AGalleryPlayerState* PlayerState = PlayerController->GetPlayerState<AGalleryPlayerState>();
-        if (PlayerState)
-        {
-            PlayerState->AddArtwork(tex);
-        }
-    }
+    CreateArtPiece(tex);
 }
 
 FString AArtworkLoader::OpenFileDialog()
