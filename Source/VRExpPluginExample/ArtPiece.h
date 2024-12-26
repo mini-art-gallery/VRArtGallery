@@ -20,6 +20,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "Components/ActorComponent.h"
+#include "GalleryProp.h"
 
 
 #include "ArtPiece.generated.h"
@@ -46,8 +47,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Art Gallery")
-	void SetArtTexture(UTexture2D* ArtTexture);
+	void SetArtwork(UMaterialInstanceDynamic* ArtWorkMaterial, int Width, int Height);
 
 	void ResizeToTexture(int32 Width, int32 Height);
-
 };

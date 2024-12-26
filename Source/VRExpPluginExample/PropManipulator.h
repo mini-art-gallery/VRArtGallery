@@ -26,4 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void TraceRay();
+
+	UFUNCTION(BlueprintCallable, Category = "PropManipulator")
+	void PlaceActiveProp();
 };

@@ -36,22 +36,11 @@ void AArtPiece::Tick(float DeltaTime)
 
 }
 
-void AArtPiece::SetArtTexture(UTexture2D* ArtTexture) {
-    if (MeshComponent && ArtTexture)
+void AArtPiece::SetArtwork(UMaterialInstanceDynamic* ArtWorkMaterial, int Width, int Height) {
+    if (MeshComponent)
     {
-        // Create a dynamic material instance from the current material
-        UMaterial* BaseMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Script/Engine.Material'/Game/VRArtGallery/ArtPieceMaterial.ArtPieceMaterial'"));
-        UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(BaseMaterial, this);
-
-        // Set the texture parameter dynamically
-        DynamicMaterial->SetTextureParameterValue(FName("ArtTexture"), ArtTexture);
-
-        // Apply the dynamic material to the mesh
-        MeshComponent->SetMaterial(0, DynamicMaterial);
-
-        int32 Width = ArtTexture->GetSizeX();
-        int32 Height = ArtTexture->GetSizeY();
-        ResizeToTexture(Width, Height);
+        MeshComponent->SetMaterial(0, ArtWorkMaterial);
+        //ResizeToTexture(Width, Height);
     }
 }
 
@@ -70,4 +59,3 @@ void AArtPiece::ResizeToTexture(int32 Width, int32 Height) {
         MeshComponent->GetOwner()->SetActorScale3D(NewScale);
     }
 }
-
