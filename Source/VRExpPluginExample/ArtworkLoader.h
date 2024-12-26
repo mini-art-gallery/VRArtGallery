@@ -24,7 +24,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "ArtPiece.h"
-
+#include "ArtWorkData.h"
 
 #include "ArtworkLoader.generated.h"
 
@@ -41,5 +41,5 @@ public:
 private:
 	FString OpenFileDialog();
 	UTexture2D* LoadTextureFromFile(const FString& FilePath);
-	void CreateArtPiece(UTexture2D* ArtTexture);
+	void CreateArtPiece(UTexture2D* ArtTexture, const FString& name);
 };

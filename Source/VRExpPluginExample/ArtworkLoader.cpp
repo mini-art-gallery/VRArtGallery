@@ -6,7 +6,7 @@
 void AArtworkLoader::LoadArtwork() {
     FString test = OpenFileDialog();
     UTexture2D* tex = LoadTextureFromFile(test);
-    CreateArtPiece(tex);
+    CreateArtPiece(tex, test);
 }
 
 FString AArtworkLoader::OpenFileDialog()
@@ -50,7 +50,7 @@ UTexture2D* AArtworkLoader::LoadTextureFromFile(const FString& FilePath)
 }
 
 
-void AArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
+void AArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture, const FString& name) {
     if (ArtTexture)
     {       
         UWorld* World = GetWorld();
@@ -63,14 +63,30 @@ void AArtworkLoader::CreateArtPiece(UTexture2D* ArtTexture) {
             FActorSpawnParameters SpawnParams;
             SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-            // Spawn the ArtPieceActor at the specified location
-            AArtPiece* NewArtPiece = World->SpawnActor<AArtPiece>(AArtPiece::StaticClass(), SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+            // Create a dynamic material instance from the current material
+            UMaterial* BaseMaterial = LoadObject<UMaterial>(nullptr, TEXT("/Script/Engine.Material'/Game/VRArtGallery/ArtPieceMaterial.ArtPieceMaterial'"));
+            UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(BaseMaterial, this);
 
-            if (NewArtPiece)
-            {
-                // Set the texture for the spawned art piece
-                NewArtPiece->SetArtTexture(ArtTexture);
-            }
+            // Set the texture parameter dynamically
+            DynamicMaterial->SetTextureParameterValue(FName("ArtTexture"), ArtTexture);
+
+            UArtWorkData* ArtworkData = NewObject<UArtWorkData>();
+            ArtworkData->Name = FPaths::GetBaseFilename(name);
+            ArtworkData->Width = ArtTexture->GetSizeX();
+            ArtworkData->Height = ArtTexture->GetSizeY();
+            ArtworkData->ArtWorkMaterial = DynamicMaterial;
+
+            UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));
+            AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
+            if (!InventorySystem) {
+                UE_LOG(LogTemp, Error, TEXT("Failed to load InventorySystem Blueprint class."));
+                return;
+            };
+            UFunction* Function = InventorySystem->FindFunction(FName("Add Item To Inventory"));
+            struct { UArtWorkData* ArtworkData; } Parameters;           
+            Parameters.ArtworkData = ArtworkData;
+            InventorySystem->ProcessEvent(Function, &Parameters);
+
         }
     }
 }

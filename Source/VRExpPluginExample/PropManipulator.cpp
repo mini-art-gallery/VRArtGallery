@@ -30,9 +30,22 @@ void APropManipulator::Tick(float DeltaTime)
 
 void APropManipulator::TraceRay()
 {
+	UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));
+	AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
+	if (!InventorySystem) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to load InventorySystem Blueprint class."));
+		return;
+	};
+	FProperty* IndexProperty = InventorySystem->GetClass()->FindPropertyByName("Currently Selected");
+	int32* SelectedIndex = IndexProperty->ContainerPtrToValuePtr<int32>(InventorySystem);
+	if (*SelectedIndex < 0) return;
+
+	FProperty* Property = InventorySystem->GetClass()->FindPropertyByName("Selected Actor");
+	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property);
+	AActor* ArtPiece = Cast<AActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
+
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	APawn* Player = PlayerController ? PlayerController->GetPawn() : nullptr;
-	AActor* ArtPiece = UGameplayStatics::GetActorOfClass(GetWorld(), AArtPiece::StaticClass());
 
 	if (!ArtPiece)
 		return;
@@ -63,3 +76,45 @@ void APropManipulator::TraceRay()
 	}
 }
 
+void APropManipulator::PlaceActiveProp() {
+	// Get Inventory System.
+	UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));
+	AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
+	if (!InventorySystem) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to load InventorySystem Blueprint class."));
+		return;
+	};
+
+	// Get the raycasted actor for transform.
+	FProperty* Property = InventorySystem->GetClass()->FindPropertyByName("Selected Actor");
+	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property);
+	AActor* SelectedActor = Cast<AActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
+
+	UFunction* Function = InventorySystem->FindFunction(FName("Spawn Actor"));
+	struct FSpawnActorParams
+	{
+		FTransform Transform;
+		AActor* SpawnedActor;
+	} Parameters;
+	Parameters.Transform = SelectedActor->GetActorTransform();
+	Parameters.SpawnedActor = nullptr;
+	InventorySystem->ProcessEvent(Function, &Parameters);
+	AActor* SpawnedActor = Parameters.SpawnedActor;
+
+
+
+
+	//// Get index in the array of the current prop.
+	//FProperty* IndexProperty = InventorySystem->GetClass()->FindPropertyByName("Currently Selected");
+	//int32* SelectedIndex= IndexProperty->ContainerPtrToValuePtr<int32>(InventorySystem);
+	//if (SelectedIndex < 0) return;
+
+	//// Get an array element to copy the Gallery Prop.
+	//FArrayProperty* InventoryProperty = CastField<FArrayProperty>(InventorySystem->GetClass()->FindPropertyByName("Inventory"));
+	//TArray<IGalleryProp*>* InventoryArray = InventoryProperty->ContainerPtrToValuePtr<TArray<IGalleryProp*>>(InventorySystem);
+	//IGalleryProp* SelectedProp = (*InventoryArray)[*SelectedIndex];
+
+	//// Spawn a copy of an actor.
+	//IGalleryProp::Execute_SpawnActor(reinterpret_cast<UObject*>(SelectedProp), InventorySystem, SelectedActor->GetActorTransform());	
+
+}
