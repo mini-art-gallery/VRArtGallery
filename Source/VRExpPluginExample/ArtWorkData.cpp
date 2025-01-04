@@ -31,7 +31,7 @@ FTransform UArtWorkData::GetDefaultTransform_Implementation() {
     FVector NewScale = FVector3d(1.f);
 
     if (ratio > 1)
-        NewScale.Z *= 1 / ratio;
+        NewScale.X *= 1 / ratio;
     else
         NewScale.Y *= ratio;
 

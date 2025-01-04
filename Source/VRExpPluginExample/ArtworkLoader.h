@@ -25,6 +25,7 @@
 #include "GameFramework/Actor.h"
 #include "ArtPiece.h"
 #include "ArtWorkData.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "ArtworkLoader.generated.h"
 
@@ -39,7 +40,7 @@ public:
 	void LoadArtwork();
 
 private:
-	FString OpenFileDialog();
+	FString OpenFileDialog(const FString FileTypes, const FString DialogTitle);
 	UTexture2D* LoadTextureFromFile(const FString& FilePath);
 	void CreateArtPiece(UTexture2D* ArtTexture, const FString& name);
 };

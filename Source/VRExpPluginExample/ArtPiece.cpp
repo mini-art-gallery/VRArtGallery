@@ -40,22 +40,5 @@ void AArtPiece::SetArtwork(UMaterialInstanceDynamic* ArtWorkMaterial, int Width,
     if (MeshComponent)
     {
         MeshComponent->SetMaterial(0, ArtWorkMaterial);
-        //ResizeToTexture(Width, Height);
-    }
-}
-
-void AArtPiece::ResizeToTexture(int32 Width, int32 Height) {
-    if (MeshComponent)
-    {
-        float ratio = (float)Width / Height;
-
-        FVector NewScale = MeshComponent->GetOwner()->GetActorScale3D();
-
-        if (ratio > 1)
-            NewScale.Z *= 1 / ratio;
-        else
-            NewScale.Y *= ratio;
-
-        MeshComponent->GetOwner()->SetActorScale3D(NewScale);
     }
 }

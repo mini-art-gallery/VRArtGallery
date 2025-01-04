@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
 #include "DesktopPlatformModule.h"
 #include "IPlatformFilePak.h"
 #include "Misc/Paths.h"
@@ -48,6 +46,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Art Gallery")
 	void SetArtwork(UMaterialInstanceDynamic* ArtWorkMaterial, int Width, int Height);
-
-	void ResizeToTexture(int32 Width, int32 Height);
 };

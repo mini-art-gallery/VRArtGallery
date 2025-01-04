@@ -72,13 +72,16 @@ void APropManipulator::TraceRay()
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
 	if (bHit) {
 		ArtPiece->SetActorLocation(HitResult.Location, false);
-		ArtPiece->SetActorRotation(HitResult.ImpactNormal.Rotation());
+
+		FRotator RotationOffset(-90, 0,0);
+		FRotator DesiredRotation = HitResult.ImpactNormal.Rotation() + RotationOffset;
+		ArtPiece->SetActorRotation(DesiredRotation);
 	}
 }
 
 void APropManipulator::PlaceActiveProp() {
 	// Get Inventory System.
-	UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));
+	UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));	
 	AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
 	if (!InventorySystem) {
 		UE_LOG(LogTemp, Error, TEXT("Failed to load InventorySystem Blueprint class."));

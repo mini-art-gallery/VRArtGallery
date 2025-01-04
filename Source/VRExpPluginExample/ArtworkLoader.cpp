@@ -4,19 +4,17 @@
 #include "ArtworkLoader.h"
 
 void AArtworkLoader::LoadArtwork() {
-    FString test = OpenFileDialog();
-    UTexture2D* tex = LoadTextureFromFile(test);
-    CreateArtPiece(tex, test);
+    FString path = OpenFileDialog(TEXT("PNG Files|.png|JPEG Files|.jpg|All Files|."), TEXT("Select a PNG file"));
+    UTexture2D* tex = LoadTextureFromFile(path);
+    CreateArtPiece(tex, path);
 }
 
-FString AArtworkLoader::OpenFileDialog()
+FString AArtworkLoader::OpenFileDialog(const FString FileTypes, const FString DialogTitle)
 {
     // Ensure the platform module is available
     IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
     if (DesktopPlatform)
     {
-        // Setup the file dialog filters (e.g., PNG files)
-        const FString FileTypes = TEXT("PNG Files|.png|JPEG Files|.jpg|All Files|.");
 
         // Variable to hold the selected file path
         TArray<FString> SelectedFile;
@@ -24,7 +22,7 @@ FString AArtworkLoader::OpenFileDialog()
         // Open the file dialog
         bool bOpened = DesktopPlatform->OpenFileDialog(
             nullptr,                            // Parent window handle (null means no parent)
-            TEXT("Select a PNG file"),          // Dialog title
+            DialogTitle,          // Dialog title
             TEXT(""),                           // Initial directory (empty means default directory)
             TEXT(""),                           // Default file name (optional)
             TEXT(""),                          // Filter for allowed file types
