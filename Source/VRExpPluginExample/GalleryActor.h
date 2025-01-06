@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SphereComponent.h"
 #include "GalleryActor.generated.h"
 
 UCLASS()
@@ -14,6 +15,28 @@ class VREXPPLUGINEXAMPLE_API AGalleryActor : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AGalleryActor();
+
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bNearPlayer;
+
+    // Sphere component
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    USphereComponent* ProximitySphere;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UStaticMeshComponent* MeshComponent;
+
+    // Overlap events
+    UFUNCTION()
+    void OnPlayerEnterProximity(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+        bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION()
+    void OnPlayerExitProximity(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 
 protected:
 	// Called when the game starts or when spawned
