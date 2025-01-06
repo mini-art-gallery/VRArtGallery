@@ -19,12 +19,12 @@
 #include "GameFramework/Actor.h"
 #include "Components/ActorComponent.h"
 #include "GalleryProp.h"
-
+#include "GalleryActor.h"
 
 #include "ArtPiece.generated.h"
 
 UCLASS()
-class VREXPPLUGINEXAMPLE_API AArtPiece : public AActor
+class VREXPPLUGINEXAMPLE_API AArtPiece : public AGalleryActor
 {
 	GENERATED_BODY()
 	

@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
+#include "GalleryActor.h"
 #include "GalleryModel.generated.h"
 
 UCLASS()
-class VREXPPLUGINEXAMPLE_API AGalleryModel : public AActor
+class VREXPPLUGINEXAMPLE_API AGalleryModel : public AGalleryActor
 {
 	GENERATED_BODY()
 	

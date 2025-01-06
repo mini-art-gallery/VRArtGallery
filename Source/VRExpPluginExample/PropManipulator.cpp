@@ -91,18 +91,18 @@ void APropManipulator::PlaceActiveProp() {
 	// Get the raycasted actor for transform.
 	FProperty* Property = InventorySystem->GetClass()->FindPropertyByName("Selected Actor");
 	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property);
-	AActor* SelectedActor = Cast<AActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
+	AGalleryActor* SelectedActor = Cast<AGalleryActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
 
 	UFunction* Function = InventorySystem->FindFunction(FName("Spawn Actor"));
 	struct FSpawnActorParams
 	{
 		FTransform Transform;
-		AActor* SpawnedActor;
+		AGalleryActor* SpawnedActor;
 	} Parameters;
 	Parameters.Transform = SelectedActor->GetActorTransform();
 	Parameters.SpawnedActor = nullptr;
 	InventorySystem->ProcessEvent(Function, &Parameters);
-	AActor* SpawnedActor = Parameters.SpawnedActor;
+	AGalleryActor* SpawnedActor = Parameters.SpawnedActor;
 
 
 
