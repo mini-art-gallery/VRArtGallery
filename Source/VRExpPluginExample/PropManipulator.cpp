@@ -3,6 +3,7 @@
 
 #include "PropManipulator.h"
 #include "Kismet/GameplayStatics.h"
+#include "Blueprint/UserWidget.h"
 #include "ArtPiece.h"
 
 // Sets default values
@@ -10,14 +11,12 @@ APropManipulator::APropManipulator()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void APropManipulator::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
@@ -103,21 +102,37 @@ void APropManipulator::PlaceActiveProp() {
 	Parameters.SpawnedActor = nullptr;
 	InventorySystem->ProcessEvent(Function, &Parameters);
 	AGalleryActor* SpawnedActor = Parameters.SpawnedActor;
+}
 
+AGalleryActor* APropManipulator::GetLookedAtActor()
+{
 
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	APawn* Player = PlayerController ? PlayerController->GetPawn() : nullptr;
 
+	UCameraComponent* CameraComponent = Player->FindComponentByClass<UCameraComponent>();
 
-	//// Get index in the array of the current prop.
-	//FProperty* IndexProperty = InventorySystem->GetClass()->FindPropertyByName("Currently Selected");
-	//int32* SelectedIndex= IndexProperty->ContainerPtrToValuePtr<int32>(InventorySystem);
-	//if (SelectedIndex < 0) return;
+	// Get the Camera's location and rotation
+	FVector CameraLocation = CameraComponent->GetComponentLocation();
+	FRotator CameraRotation = CameraComponent->GetComponentRotation();
 
-	//// Get an array element to copy the Gallery Prop.
-	//FArrayProperty* InventoryProperty = CastField<FArrayProperty>(InventorySystem->GetClass()->FindPropertyByName("Inventory"));
-	//TArray<IGalleryProp*>* InventoryArray = InventoryProperty->ContainerPtrToValuePtr<TArray<IGalleryProp*>>(InventorySystem);
-	//IGalleryProp* SelectedProp = (*InventoryArray)[*SelectedIndex];
+	// Get the player's camera location and forward vector (direction of the ray)
+	FVector StartLocation = CameraLocation;
+	FVector ForwardVector = CameraRotation.Vector();
 
-	//// Spawn a copy of an actor.
-	//IGalleryProp::Execute_SpawnActor(reinterpret_cast<UObject*>(SelectedProp), InventorySystem, SelectedActor->GetActorTransform());	
+	// Define the end of the ray (for example, 1000 units away)
+	FVector EndLocation = StartLocation + (ForwardVector * 1000.0f);
 
+	// Perform the line trace (raycast)
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(Player);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, CollisionParams);
+	if (bHit) {
+		AActor* hitActor = HitResult.GetActor();
+		// Return not nullptr if actor is an AGalleryActor.
+		return Cast<AGalleryActor>(hitActor); 
+	}
+	return nullptr;
 }

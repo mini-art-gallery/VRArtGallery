@@ -29,4 +29,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PropManipulator")
 	void PlaceActiveProp();
+
+
+	UFUNCTION(BlueprintCallable, Category = "PropManipulator")
+	AGalleryActor* GetLookedAtActor();
 };
