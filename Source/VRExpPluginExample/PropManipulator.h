@@ -33,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PropManipulator")
 	AGalleryActor* GetLookedAtActor();
+
+	UFUNCTION(BlueprintCallable, Category = "PropManipulator")
+	void ScaleObject(float scale);
 };

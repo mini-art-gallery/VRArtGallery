@@ -13,6 +13,26 @@ APropManipulator::APropManipulator()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void APropManipulator::ScaleObject(float scale)
+{
+	// Get Inventory System.
+	UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));
+	AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
+	if (!InventorySystem) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to load InventorySystem Blueprint class."));
+		return;
+	};
+
+	// Get the raycasted actor for transform.
+	FProperty* Property = InventorySystem->GetClass()->FindPropertyByName("Selected Actor");
+	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property);
+	AGalleryActor* SelectedActor = Cast<AGalleryActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
+
+	auto actorScale = SelectedActor->GetActorRelativeScale3D();
+	actorScale *= scale;
+	SelectedActor->SetActorRelativeScale3D(actorScale);
+}
+
 // Called when the game starts or when spawned
 void APropManipulator::BeginPlay()
 {
