@@ -3,10 +3,17 @@
 
 #include "ArtworkLoader.h"
 
+#include "Engine/DirectionalLight.h"
+
 void AArtworkLoader::LoadArtwork() {
     FString path = OpenFileDialog(TEXT("PNG Files|.png|JPEG Files|.jpg|All Files|."), TEXT("Select a PNG file"));
     UTexture2D* tex = LoadTextureFromFile(path);
     CreateArtPiece(tex, path);
+}
+
+void AArtworkLoader::BeginPlay()
+{
+    Super::BeginPlay();
 }
 
 FString AArtworkLoader::OpenFileDialog(const FString FileTypes, const FString DialogTitle)

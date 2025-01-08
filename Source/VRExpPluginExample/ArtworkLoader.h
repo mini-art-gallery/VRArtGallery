@@ -39,6 +39,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ArtworkLoader")
 	void LoadArtwork();
 
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
 private:
 	FString OpenFileDialog(const FString FileTypes, const FString DialogTitle);
 	UTexture2D* LoadTextureFromFile(const FString& FilePath);
