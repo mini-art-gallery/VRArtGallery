@@ -13,6 +13,47 @@ APropManipulator::APropManipulator()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void APropManipulator::ScaleObject(float scale)
+{
+	// Get Inventory System.
+	UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));
+	AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
+	if (!InventorySystem) {
+		UE_LOG(LogTemp, Error, TEXT("Failed to load InventorySystem Blueprint class."));
+		return;
+	};
+
+	// Get the raycasted actor for transform.
+	FProperty* Property = InventorySystem->GetClass()->FindPropertyByName("Selected Actor");
+	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property);
+	AGalleryActor* SelectedActor = Cast<AGalleryActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
+
+	auto actorScale = SelectedActor->GetActorRelativeScale3D();
+	actorScale *= scale;
+	SelectedActor->SetActorRelativeScale3D(actorScale);
+}
+
+void APropManipulator::RotateObject(float degree)
+{
+	//// Get Inventory System.
+	//UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));
+	//AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
+	//if (!InventorySystem) {
+	//	UE_LOG(LogTemp, Error, TEXT("Failed to load InventorySystem Blueprint class."));
+	//	return;
+	//};
+
+	//// Get the raycasted actor for transform.
+	//FProperty* Property = InventorySystem->GetClass()->FindPropertyByName("Selected Actor");
+	//FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property);
+	//AGalleryActor* SelectedActor = Cast<AGalleryActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
+
+	//FRotator CurrentRotation = SelectedActor->GetActorRotation();
+	//FRotator RotationOffset(0, degree, 0);
+	//SelectedActor->SetActorRotation(CurrentRotation + RotationOffset);
+	propRotation += degree;
+}
+
 // Called when the game starts or when spawned
 void APropManipulator::BeginPlay()
 {
@@ -73,7 +114,8 @@ void APropManipulator::TraceRay()
 		ArtPiece->SetActorLocation(HitResult.Location, false);
 
 		FRotator RotationOffset(-90, 0,0);
-		FRotator DesiredRotation = HitResult.ImpactNormal.Rotation() + RotationOffset;
+		FRotator RotationOffsetFromUser(0, propRotation, 0);
+		FRotator DesiredRotation = HitResult.ImpactNormal.Rotation() + RotationOffset + RotationOffsetFromUser;
 		ArtPiece->SetActorRotation(DesiredRotation);
 	}
 }
