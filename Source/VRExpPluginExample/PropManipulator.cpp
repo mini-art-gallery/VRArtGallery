@@ -113,10 +113,13 @@ void APropManipulator::TraceRay()
 	if (bHit) {
 		ArtPiece->SetActorLocation(HitResult.Location, false);
 
-		FRotator RotationOffset(-90, 0,0);
+		FRotator RotationOffset(-90, 0, 0);
 		FRotator RotationOffsetFromUser(0, propRotation, 0);
-		FRotator DesiredRotation = HitResult.ImpactNormal.Rotation() + RotationOffset + RotationOffsetFromUser;
+		FQuat UserRotation = FQuat(HitResult.ImpactNormal, FMath::DegreesToRadians(propRotation));
+
+		FRotator DesiredRotation = HitResult.ImpactNormal.Rotation() + RotationOffset;// +UserRotation.Rotator();
 		ArtPiece->SetActorRotation(DesiredRotation);
+		ArtPiece->AddActorLocalRotation(RotationOffsetFromUser);
 	}
 }
 
