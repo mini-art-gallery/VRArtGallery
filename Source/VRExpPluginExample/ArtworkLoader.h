@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ArtworkLoader")
 	void LoadArtwork();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Files")
+	TArray<FString> Files;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

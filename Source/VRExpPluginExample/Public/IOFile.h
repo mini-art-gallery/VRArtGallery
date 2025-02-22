@@ -59,4 +59,11 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "IOFile")
     void LoadActors(FString FileName);
+
+    UFUNCTION(BlueprintCallable, Category = "IOFile")
+    void SaveScene();
+
+private:
+    UTexture2D* LoadTextureFromFile(const FString& FilePath);
+    void CreateArtPiece(UTexture2D* ArtTexture, const FString& name);
 };
