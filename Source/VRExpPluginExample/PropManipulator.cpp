@@ -137,6 +137,10 @@ void APropManipulator::PlaceActiveProp() {
 	FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property);
 	AGalleryActor* SelectedActor = Cast<AGalleryActor>(ObjectProperty->GetObjectPropertyValue_InContainer(InventorySystem));
 
+	FProperty* TypeProperty = InventorySystem->GetClass()->FindPropertyByName("Currently Selected");
+	FIntProperty* IntTypeProperty = CastField<FIntProperty>(TypeProperty);
+	int32 Type = IntTypeProperty->GetPropertyValue_InContainer(InventorySystem);
+
 	UFunction* Function = InventorySystem->FindFunction(FName("Spawn Actor"));
 	struct FSpawnActorParams
 	{
@@ -147,6 +151,10 @@ void APropManipulator::PlaceActiveProp() {
 	Parameters.SpawnedActor = nullptr;
 	InventorySystem->ProcessEvent(Function, &Parameters);
 	AGalleryActor* SpawnedActor = Parameters.SpawnedActor;
+
+	Positions.Add(Parameters.Transform.GetTranslation());
+	Rotations.Add(Parameters.Transform.GetRotation());
+	Types.Add(Type);
 }
 
 AGalleryActor* APropManipulator::GetLookedAtActor()

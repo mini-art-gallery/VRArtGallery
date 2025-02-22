@@ -40,6 +40,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PropManipulator")
 	void RotateObject(float degree);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Postions")
+	TArray<FVector> Positions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Rotations")
+	TArray<FQuat> Rotations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Types")
+	TArray<int32> Types;
+
 private:
 	float propRotation=0;
 };
