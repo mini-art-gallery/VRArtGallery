@@ -63,6 +63,18 @@ public:
     UFUNCTION(BlueprintCallable, Category = "IOFile")
     void SaveScene();
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Postions")
+    TArray<FVector> FilePositions;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Rotations")
+    TArray<FQuat> FileRotations;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Types")
+    TArray<int32> FileTypes;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Files")
+    TArray<FString> FileFiles;
+
 private:
     UTexture2D* LoadTextureFromFile(const FString& FilePath);
     void CreateArtPiece(UTexture2D* ArtTexture, const FString& name);

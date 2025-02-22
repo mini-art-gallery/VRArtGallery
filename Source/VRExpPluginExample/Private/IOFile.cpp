@@ -118,6 +118,7 @@ void AIOFile::LoadActors(FString FileName) {
 		for (int i = 0; i < Lines.Num() - 1; i++) {
 			UTexture2D* tex = LoadTextureFromFile(Lines[i]);
 			CreateArtPiece(tex, Lines[i]);
+			FileFiles.Add(Lines[i]);
 		}
 
 		TArray<FString> ParsedValues;
@@ -145,6 +146,10 @@ void AIOFile::LoadActors(FString FileName) {
 			Parameters.SpawnedActor = nullptr;
 			InventorySystem->ProcessEvent(Function, &Parameters);
 			AGalleryActor* SpawnedActor = Parameters.SpawnedActor;
+
+			FileTypes.Add(type);
+			FilePositions.Add(FVector(x, y, z));
+			FileRotations.Add(FQuat(rx, ry, rz, rw));
 		}
 	}
 }
@@ -221,6 +226,10 @@ void AIOFile::SaveScene() {
 			{
 				ResultString += Files[i] + "\n";
 			}
+			for (int32 i = 0; i < FileFiles.Num(); i++)
+			{
+				ResultString += FileFiles[i] + "\n";
+			}
 		}
 		else {
 			ResultString = "actor cannot be cast";
@@ -288,11 +297,23 @@ void AIOFile::SaveScene() {
 				ResultString += FString::Printf(TEXT("%d %f %f %f %f %f %f %f"), Types[i], Positions[i].X, Positions[i].Y, Positions[i].Z, Rotations[i].X, Rotations[i].Y, Rotations[i].Z, Rotations[i].W);
 
 				// Add a space between numbers, but avoid a trailing space
-				if (i < Positions.Num() - 1)
+				if (i < Positions.Num() - 1 || FilePositions.Num() > 0)
 				{
 					ResultString += TEXT(" | ");
 				}
 			}
+
+			for (int32 i = 0; i < FilePositions.Num(); i++)
+			{
+				ResultString += FString::Printf(TEXT("%d %f %f %f %f %f %f %f"), FileTypes[i], FilePositions[i].X, FilePositions[i].Y, FilePositions[i].Z, FileRotations[i].X, FileRotations[i].Y, FileRotations[i].Z, FileRotations[i].W);
+
+				// Add a space between numbers, but avoid a trailing space
+				if (i < FilePositions.Num() - 1)
+				{
+					ResultString += TEXT(" | ");
+				}
+			}
+
 
 			FFileHelper::SaveStringToFile(ResultString, *FilePath);
 		}
