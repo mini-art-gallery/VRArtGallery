@@ -43,10 +43,11 @@ void AGalleryLight::AddPointLight()
         PointLight->RegisterComponent();
         PointLight->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
         PointLight->SetRelativeLocation(FVector(0.f, 0.f, 200.f));
-        PointLight->SetIntensity(3000000.f);
-        PointLight->SetLightColor(FColor::Red);
-        PointLight->SetAttenuationRadius(500.f);
+        PointLight->SetIntensity(2500);
+        PointLight->SetLightColor(FColor(253, 244, 220));
+        PointLight->SetAttenuationRadius(5000.f);
         PointLight->SetVisibility(true);
+        Light = PointLight;
     }
 }
 
@@ -59,11 +60,12 @@ void AGalleryLight::AddSpotLight()
         SpotLight->RegisterComponent(); // Register the component with the engine
         SpotLight->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
         SpotLight->SetRelativeLocation(FVector(0.f, 0.f, 200.f));
-        SpotLight->SetIntensity(3000000.f);
-        SpotLight->SetLightColor(FColor::Green);
+        SpotLight->SetIntensity(0);
+        SpotLight->SetLightColor(FColor(253, 244, 220));
         SpotLight->SetOuterConeAngle(45.f);
         SpotLight->SetInnerConeAngle(30.f);
         SpotLight->SetVisibility(true);
+        Light = SpotLight;
     }
 }
 
@@ -76,14 +78,44 @@ void AGalleryLight::AddRectLight()
     {
         RectLight->RegisterComponent();
         RectLight->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-        RectLight->SetIntensity(3000000.f);
+        RectLight->SetIntensity(250000);
         RectLight->SetIntensityUnits(ELightUnits::Lumens);
-        RectLight->SetLightColor(FLinearColor::Blue);
+        RectLight->SetLightColor(FColor(253, 244, 220));
         RectLight->SetSourceWidth(200.0f);
         RectLight->SetSourceHeight(100.0f);
-        RectLight->SetAttenuationRadius(1000.0f);
+        RectLight->SetAttenuationRadius(10000.0f);
         RectLight->SetMobility(EComponentMobility::Movable);
         RectLight->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
         RectLight->SetVisibility(true);
+        Light = RectLight;
     }
+}
+
+void AGalleryLight::UpdateIntensity(float Intensity)
+{
+    if (Light)
+    {
+
+        if (UPointLightComponent* Point = Cast<UPointLightComponent>(Light)) {
+            Light->SetIntensity(Intensity*0.01);
+        }
+        else {
+            Light->SetIntensity(Intensity);
+        }
+    }
+}
+
+float AGalleryLight::GetIntensity()
+{
+    if (Light)
+    {
+
+        if (UPointLightComponent* Point = Cast<UPointLightComponent>(Light)) {
+           return Light->Intensity * 100;
+        }
+        else {
+            return Light->Intensity;
+        }
+    }
+    return 0;
 }

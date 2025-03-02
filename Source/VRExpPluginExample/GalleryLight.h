@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GalleryActor.h"
+#include "Components/PointLightComponent.h"
 #include "GalleryLight.generated.h"
 
 UCLASS()
@@ -11,7 +12,9 @@ class VREXPPLUGINEXAMPLE_API AGalleryLight : public AGalleryActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	ULocalLightComponent* Light;
+
 	// Sets default values for this actor's properties
 	AGalleryLight();
 
@@ -20,6 +23,12 @@ public:
 	void AddPointLight();
 	void AddSpotLight();
 	void AddRectLight();
+
+	UFUNCTION(BlueprintCallable, Category = "GalleryLight")
+	void UpdateIntensity(float Intensity);
+
+	UFUNCTION(BlueprintCallable, Category = "GalleryLight")
+	float GetIntensity();
 
 protected:
 	// Called when the game starts or when spawned
