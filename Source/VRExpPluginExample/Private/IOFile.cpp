@@ -66,10 +66,10 @@ FString OpenFileDialog(const FString FileTypes, const FString DialogTitle)
 }
 
 FRoom AIOFile::LoadRoom(bool IsVr) {
-	FString FilePath = !IsVr ? OpenFileDialog("", "") : "default.txt";
+	FString FilePath = !IsVr ? OpenFileDialog("", "") : FPaths::ProjectDir() + "default.txt";
 
 	if (FilePath.IsEmpty()) {
-		return FRoom(10, 5, 12, "");
+		return FRoom(20, 5, 15, "");
 	}
 
 	FString FileContent;
