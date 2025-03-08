@@ -10,6 +10,7 @@
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include "../PropManipulator.h"
 #include "../ArtWorkLoader.h"
+#include "../GalleryLight.h"
 
 // Sets default values
 AIOFile::AIOFile()
@@ -115,10 +116,18 @@ void AIOFile::LoadActors(FString FileName) {
 		TArray<FString> Lines;
 		FileContent.ParseIntoArray(Lines, TEXT("\n"), true);
 
-		for (int i = 0; i < Lines.Num() - 1; i++) {
+		int lastTexture = 0;
+
+		for (int i = 0; i < Lines.Num() - 1 && !Lines[i].Equals("###"); i++) {
 			UTexture2D* tex = LoadTextureFromFile(Lines[i]);
 			CreateArtPiece(tex, Lines[i]);
 			FileFiles.Add(Lines[i]);
+			lastTexture = i;
+		}
+
+		TArray<float> intensivities;
+		for (int i = lastTexture + 1; i < Lines.Num() - 1; i++) {
+			intensivities.Add(FCString::Atof(*Lines[i]));
 		}
 
 		TArray<FString> ParsedValues;
@@ -150,6 +159,14 @@ void AIOFile::LoadActors(FString FileName) {
 			FileTypes.Add(type);
 			FilePositions.Add(FVector(x, y, z));
 			FileRotations.Add(FQuat(rx, ry, rz, rw));
+		}
+
+		TArray<AActor*> FoundLights;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGalleryLight::StaticClass(), FoundLights);
+
+		for (int i = 0; i < FoundLights.Num() && i < intensivities.Num(); i++) {
+			AGalleryLight* Light = Cast<AGalleryLight>(FoundLights[i]);
+			Light->UpdateIntensity(intensivities[i]);
 		}
 	}
 }
@@ -241,6 +258,15 @@ void AIOFile::SaveScene() {
 		ResultString = "actor not found";
 		FFileHelper::SaveStringToFile(ResultString, *FilePath);
 		return;
+	}
+
+	ResultString += "###\n";
+
+	TArray<AActor*> FoundLights;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGalleryLight::StaticClass(), FoundLights);
+	for (int i = 0; i < FoundLights.Num(); i++) {
+		AGalleryLight* Light = Cast<AGalleryLight>(FoundLights[i]);
+		ResultString += FString::Printf(TEXT("%f\n"), Light->GetIntensity());
 	}
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APropManipulator::StaticClass(), FoundActors);
