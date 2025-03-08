@@ -55,7 +55,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "IOFile")
-    FRoom LoadRoom();
+    FRoom LoadRoom(bool IsVr);
 
     UFUNCTION(BlueprintCallable, Category = "IOFile")
     void LoadActors(FString FileName);

@@ -64,8 +64,8 @@ FString OpenFileDialog(const FString FileTypes, const FString DialogTitle)
 	return FString(); // Return an empty string if no file was selected
 }
 
-FRoom AIOFile::LoadRoom() {
-	auto FilePath = OpenFileDialog("", "");
+FRoom AIOFile::LoadRoom(bool IsVr) {
+	FString FilePath = !IsVr ? OpenFileDialog("", "") : "default.txt";
 
 	if (FilePath.IsEmpty()) {
 		return FRoom(10, 5, 12, "");
@@ -250,7 +250,7 @@ void AIOFile::SaveScene() {
 		APropManipulator* PropManipulator = Cast<APropManipulator>(FoundActors[0]);
 		if (PropManipulator)
 		{
-			/*UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/BP_Room.BP_Room_C"));
+			UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/BP_Room.BP_Room_C"));
 
 			if (!InventorySystemClass) {
 				FFileHelper::SaveStringToFile(TEXT("Bluprint cannot be found"), *FilePath);
@@ -263,6 +263,19 @@ void AIOFile::SaveScene() {
 				return;
 			};
 
+			for (TFieldIterator<FProperty> It(InventorySystem->GetClass()); It; ++It)
+			{
+				if (FProperty* Prop = *It)
+				{
+					// Get the property name
+					const FString PropName = Prop->GetName();
+					// Get the property’s C++ type
+					const FString PropType = Prop->GetCPPType();
+
+					UE_LOG(LogTemp, Warning, TEXT("Property found: %s (type = %s)"), *PropName, *PropType);
+				}
+			}
+
 			FProperty* WidthProperty = InventorySystem->GetClass()->FindPropertyByName("Width");
 
 			if (!WidthProperty) {
@@ -270,27 +283,29 @@ void AIOFile::SaveScene() {
 				return;
 			}
 
-			FFloatProperty* IntWidthProperty = CastField<FFloatProperty>(WidthProperty);
+			FDoubleProperty* IntWidthProperty = CastField<FDoubleProperty>(WidthProperty);
 
 			if (!IntWidthProperty) {
 				FFileHelper::SaveStringToFile(TEXT("Property cannot be cast"), *FilePath);
 				return;
 			}
 
-			float Width = IntWidthProperty->GetPropertyValue_InContainer(InventorySystem);*/
+			float Width = IntWidthProperty->GetPropertyValue_InContainer(InventorySystem);
 
-			/*FProperty* HeightProperty = InventorySystem->GetClass()->FindPropertyByName("Height");
-			FFloatProperty* IntHeightProperty = CastField<FFloatProperty>(HeightProperty);
-			float Height = IntHeightProperty->GetPropertyValue_InContainer(InventorySystem);
 
-			FProperty* LengthProperty = InventorySystem->GetClass()->FindPropertyByName("Length");
-			FFloatProperty* IntLengthProperty = CastField<FFloatProperty>(LengthProperty);
-			float Length = IntLengthProperty->GetPropertyValue_InContainer(InventorySystem);*/
+
+			//FProperty* HeightProperty = InventorySystem->GetClass()->FindPropertyByName("Height");
+			//FFloatProperty* IntHeightProperty = CastField<FFloatProperty>(HeightProperty);
+			//float Height = IntHeightProperty->GetPropertyValue_InContainer(InventorySystem);
+
+			//FProperty* LengthProperty = InventorySystem->GetClass()->FindPropertyByName("Length");
+			//FFloatProperty* IntLengthProperty = CastField<FFloatProperty>(LengthProperty);
+			//float Length = IntLengthProperty->GetPropertyValue_InContainer(InventorySystem);
 
 			auto Positions = PropManipulator->Positions;
 			auto Rotations = PropManipulator->Rotations;
 			auto Types = PropManipulator->Types;
-			ResultString += FString::Printf(TEXT("%f %f %f | "), 5.0f, 5.0f, 5.0f);
+			ResultString += FString::Printf(TEXT("%f %f %f | "), Width, 5.0f, 5.0f);
 
 			for (int32 i = 0; i < Positions.Num(); i++)
 			{
