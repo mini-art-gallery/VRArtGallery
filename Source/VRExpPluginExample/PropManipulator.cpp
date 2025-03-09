@@ -124,6 +124,7 @@ void APropManipulator::TraceRay()
 }
 
 void APropManipulator::PlaceActiveProp() {
+	propRotation = 0;
 	// Get Inventory System.
 	UClass* InventorySystemClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("/Game/VRArtGallery/Inventory/InventorySystem.InventorySystem_C"));	
 	AActor* InventorySystem = UGameplayStatics::GetActorOfClass(GetWorld(), InventorySystemClass);
