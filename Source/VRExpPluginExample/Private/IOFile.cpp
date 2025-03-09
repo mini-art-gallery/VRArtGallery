@@ -133,7 +133,7 @@ void AIOFile::LoadActors(FString FileName) {
 		TArray<FString> ParsedValues;
 		Lines.Last().ParseIntoArray(ParsedValues, TEXT(" "), true);
 
-		for (int i = 4; i < ParsedValues.Num() - 7; i += 9) 
+		for (int i = 4; i < ParsedValues.Num() - 10; i += 12) 
 		{
 			int type = FCString::Atoi(*ParsedValues[i]);
 			float x = FCString::Atof(*ParsedValues[i + 1]);
@@ -143,6 +143,9 @@ void AIOFile::LoadActors(FString FileName) {
 			float ry = FCString::Atof(*ParsedValues[i + 5]);
 			float rz = FCString::Atof(*ParsedValues[i + 6]);
 			float rw = FCString::Atof(*ParsedValues[i + 7]);
+			float sx = FCString::Atof(*ParsedValues[i + 8]);
+			float sy = FCString::Atof(*ParsedValues[i + 9]);
+			float sz = FCString::Atof(*ParsedValues[i + 10]);
 
 			IntProperty->SetPropertyValue_InContainer(InventorySystem, type);
 
@@ -151,7 +154,7 @@ void AIOFile::LoadActors(FString FileName) {
 				FTransform Transform;
 				AGalleryActor* SpawnedActor;
 			} Parameters;
-			Parameters.Transform = FTransform(FRotator(FQuat(rx, ry, rz, rw)), FVector(x, y, z), FVector(1, 1, 1));
+			Parameters.Transform = FTransform(FRotator(FQuat(rx, ry, rz, rw)), FVector(x, y, z), FVector(sx, sy, sz));
 			Parameters.SpawnedActor = nullptr;
 			InventorySystem->ProcessEvent(Function, &Parameters);
 			AGalleryActor* SpawnedActor = Parameters.SpawnedActor;
@@ -159,6 +162,7 @@ void AIOFile::LoadActors(FString FileName) {
 			FileTypes.Add(type);
 			FilePositions.Add(FVector(x, y, z));
 			FileRotations.Add(FQuat(rx, ry, rz, rw));
+			FileScales.Add(FVector(sx, sy, sz));
 		}
 
 		TArray<AActor*> FoundLights;
@@ -318,24 +322,23 @@ void AIOFile::SaveScene() {
 
 			float Width = IntWidthProperty->GetPropertyValue_InContainer(InventorySystem);
 
+			FProperty* HeightProperty = InventorySystem->GetClass()->FindPropertyByName("Height");
+			FDoubleProperty* IntHeightProperty = CastField<FDoubleProperty>(HeightProperty);
+			float Height = IntHeightProperty->GetPropertyValue_InContainer(InventorySystem);
 
-
-			//FProperty* HeightProperty = InventorySystem->GetClass()->FindPropertyByName("Height");
-			//FFloatProperty* IntHeightProperty = CastField<FFloatProperty>(HeightProperty);
-			//float Height = IntHeightProperty->GetPropertyValue_InContainer(InventorySystem);
-
-			//FProperty* LengthProperty = InventorySystem->GetClass()->FindPropertyByName("Length");
-			//FFloatProperty* IntLengthProperty = CastField<FFloatProperty>(LengthProperty);
-			//float Length = IntLengthProperty->GetPropertyValue_InContainer(InventorySystem);
+			FProperty* LengthProperty = InventorySystem->GetClass()->FindPropertyByName("Length");
+			FDoubleProperty* IntLengthProperty = CastField<FDoubleProperty>(LengthProperty);
+			float Length = IntLengthProperty->GetPropertyValue_InContainer(InventorySystem);
 
 			auto Positions = PropManipulator->Positions;
 			auto Rotations = PropManipulator->Rotations;
+			auto Scales = PropManipulator->Scales;
 			auto Types = PropManipulator->Types;
-			ResultString += FString::Printf(TEXT("%f %f %f | "), Width, 5.0f, 5.0f);
+			ResultString += FString::Printf(TEXT("%f %f %f | "), Width, Height, Length);
 
 			for (int32 i = 0; i < Positions.Num(); i++)
 			{
-				ResultString += FString::Printf(TEXT("%d %f %f %f %f %f %f %f"), Types[i], Positions[i].X, Positions[i].Y, Positions[i].Z, Rotations[i].X, Rotations[i].Y, Rotations[i].Z, Rotations[i].W);
+				ResultString += FString::Printf(TEXT("%d %f %f %f %f %f %f %f %f %f %f"), Types[i], Positions[i].X, Positions[i].Y, Positions[i].Z, Rotations[i].X, Rotations[i].Y, Rotations[i].Z, Rotations[i].W, Scales[i].X, Scales[i].Y, Scales[i].Z);
 
 				// Add a space between numbers, but avoid a trailing space
 				if (i < Positions.Num() - 1 || FilePositions.Num() > 0)
@@ -346,7 +349,7 @@ void AIOFile::SaveScene() {
 
 			for (int32 i = 0; i < FilePositions.Num(); i++)
 			{
-				ResultString += FString::Printf(TEXT("%d %f %f %f %f %f %f %f"), FileTypes[i], FilePositions[i].X, FilePositions[i].Y, FilePositions[i].Z, FileRotations[i].X, FileRotations[i].Y, FileRotations[i].Z, FileRotations[i].W);
+				ResultString += FString::Printf(TEXT("%d %f %f %f %f %f %f %f %f %f %f"), FileTypes[i], FilePositions[i].X, FilePositions[i].Y, FilePositions[i].Z, FileRotations[i].X, FileRotations[i].Y, FileRotations[i].Z, FileRotations[i].W, FileScales[i].X, FileScales[i].Y, FileScales[i].Z);
 
 				// Add a space between numbers, but avoid a trailing space
 				if (i < FilePositions.Num() - 1)

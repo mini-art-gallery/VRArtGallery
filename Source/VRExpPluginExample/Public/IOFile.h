@@ -69,6 +69,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Rotations")
     TArray<FQuat> FileRotations;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Scales")
+    TArray<FVector> FileScales;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My Types")
     TArray<int32> FileTypes;
 
