@@ -155,6 +155,7 @@ void APropManipulator::PlaceActiveProp() {
 
 	Positions.Add(Parameters.Transform.GetTranslation());
 	Rotations.Add(Parameters.Transform.GetRotation());
+	Scales.Add(Parameters.Transform.GetScale3D());
 	Types.Add(Type);
 }
 
