@@ -11,6 +11,7 @@
 #include "../PropManipulator.h"
 #include "../ArtWorkLoader.h"
 #include "../GalleryLight.h"
+#include "../GalleryLabel.h"
 
 // Sets default values
 AIOFile::AIOFile()
@@ -125,10 +126,27 @@ void AIOFile::LoadActors(FString FileName) {
 			lastTexture = i;
 		}
 
+		int lastIntensivity = lastTexture + 1;
+
 		TArray<float> intensivities;
-		for (int i = lastTexture + 1; i < Lines.Num() - 1; i++) {
+		for (int i = lastTexture + 2; i < Lines.Num() - 1 && !Lines[i].Equals("###"); i++) {
 			intensivities.Add(FCString::Atof(*Lines[i]));
+			lastIntensivity = i;
 		}
+
+		TArray<FString> labels;
+		FString currentLabel = "";
+		for (int i = lastIntensivity + 2; i < Lines.Num() - 1; i++) {
+			if (Lines[i].Equals("#")) {
+				labels.Add(currentLabel);
+				currentLabel = "";
+			}
+			else {
+				currentLabel += "\n";
+				currentLabel += Lines[i];
+			}
+		}
+		labels.Add(currentLabel);
 
 		TArray<FString> ParsedValues;
 		Lines.Last().ParseIntoArray(ParsedValues, TEXT(" "), true);
@@ -171,6 +189,14 @@ void AIOFile::LoadActors(FString FileName) {
 		for (int i = 0; i < FoundLights.Num() && i < intensivities.Num(); i++) {
 			AGalleryLight* Light = Cast<AGalleryLight>(FoundLights[i]);
 			Light->UpdateIntensity(intensivities[i]);
+		}
+
+		TArray<AActor*> FoundLabels;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGalleryLabel::StaticClass(), FoundLabels);
+
+		for (int i = 0; i < FoundLabels.Num() && i < labels.Num(); i++) {
+			AGalleryLabel* Label = Cast<AGalleryLabel>(FoundLabels[i]);
+			Label->UpdateText(labels[i]);
 		}
 	}
 }
@@ -271,6 +297,16 @@ void AIOFile::SaveScene() {
 	for (int i = 0; i < FoundLights.Num(); i++) {
 		AGalleryLight* Light = Cast<AGalleryLight>(FoundLights[i]);
 		ResultString += FString::Printf(TEXT("%f\n"), Light->GetIntensity());
+	}
+
+	ResultString += "###\n";
+
+	TArray<AActor*> FoundLabels;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGalleryLabel::StaticClass(), FoundLabels);
+	for (int i = 0; i < FoundLabels.Num(); i++) {
+		AGalleryLabel* Label = Cast<AGalleryLabel>(FoundLabels[i]);
+		ResultString += Label->GetText();
+		ResultString += "\n#\n";
 	}
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APropManipulator::StaticClass(), FoundActors);
